@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinica Bar Menu</title>
+    
+    <!-- Google Fonts for Hebrew and English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Frank+Ruhl+Libre:wght@300;500;700&family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #0c0905;
+            --text-color: #f0f0f0;
+            --gold-color: #dcb158; /* Matching the PDF gold tone */
+            --muted-gold: #b38f46;
+            --secondary-text: #a0a0a0;
+            --font-main: 'Heebo', sans-serif;
+            --font-display: 'Amatic SC', cursive; /* For the "Handwritten" feel */
+            --font-serif: 'Frank Ruhl Libre', serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            /* Dark gradient background to simulate the photo overlays */
+            background-image: 
+                linear-gradient(rgba(12, 9, 5, 0.9), rgba(12, 9, 5, 0.8)),
+                url('https://images.unsplash.com/photo-1514362545857-3bc16549766b?auto=format&fit=crop&q=80'); 
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Header & Logo --- */
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+
+        .logo-circle {
+            width: 120px;
+            height: 120px;
+            border: 1px solid var(--gold-color);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(220, 177, 88, 0.1);
+        }
+
+        .logo-text {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .logo-sub {
+            font-family: 'Amatic SC', cursive; 
+            font-size: 1.5rem;
+            color: var(--gold-color);
+        }
+
+        h1.main-title {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            color: var(--gold-color);
+            margin-bottom: 40px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* --- Menu Layout --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+
+        /* Grid for Drink sections to mimic multi-column PDF */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        /* On larger screens, allow two columns for drinks */
+        @media (min-width: 768px) {
+            .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+                column-gap: 80px;
+            }
+            /* Make the first section (usually food) span full width if it's large */
+            .category-section.full-width {
+                grid-column: 1 / -1;
+            }
+        }
+
+        /* --- Category Styling --- */
+        .category-section {
+            margin-bottom: 30px;
+            break-inside: avoid;
+        }
+
+        .category-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            color: var(--gold-color);
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        /* --- Item Row Styling --- */
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .item-info {
+            flex-grow: 1;
+            padding-left: 15px; /* Space between text and price */
+            text-align: right;
+        }
+
+        .item-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .item-desc {
+            font-size: 0.85rem;
+            color: var(--secondary-text);
+            font-weight: 300;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* The Price Section */
+        .item-price-wrapper {
+            white-space: nowrap;
+            display: flex;
+            align-items: baseline;
+            font-family: 'Heebo', sans-serif; /* Clean font for numbers */
+            font-weight: 400;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+            color: #fff;
+            min-width: 60px;
+            justify-content: flex-end;
+        }
+        
+        /* Dotted leader line */
+        .spacer-line {
+            flex-grow: 1;
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.2);
+            margin: 0 10px;
+            position: relative;
+            top: -5px;
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+            padding: 20px;
+            margin-top: 40px;
+            border-top: 1px solid #222;
+        }
+
+        /* Loading State */
+        #loading {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--gold-color);
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-circle">
+            <div class="logo-text">CLINICA</div>
+            <div class="logo-sub">bar</div>
+        </div>
+        <h1 class="main-title">תפריט</h1>
+    </header>
+
+    <div class="container">
+        <div id="loading">טוען תפריט...</div>
+        <div id="menu-container" class="menu-grid">
+            <!-- Menu items will be injected here via JavaScript -->
+        </div>
+    </div>
+
+    <footer>
+        התמונה להמחשה ט.ל.ח
+    </footer>
+
+    <script>
+        // Configuration
+        const CSV_URL = 'menu.csv';
+
+        // Function to fetch and parse CSV
+        async function loadMenu() {
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) throw new Error("Could not load menu file");
+                
+                const data = await response.text();
+                const items = parseCSV(data);
+                renderMenu(items);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading').innerText = "שגיאה בטעינת התפריט. אנא וודא שקובץ menu.csv קיים.";
+            }
+        }
+
+        // CSV Parser (Handling commas inside quotes roughly)
+        function parseCSV(str) {
+            const lines = str.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            const result = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                // Regex to split by comma but ignore commas inside quotes
+                const regex = /(?:,|\n|^)("(?:(?:"")*|[^"]*)*"|[^",\n]*|(?:\n|$))/g;
+                const matches = [];
+                let match;
+                while (match = regex.exec(line)) {
+                    // Remove first char if it's a comma
+                    let val = match[1];
+                    if (match[0].charAt(0) === ',') {
+                        val = match[1]; 
+                    }
+                    if (val !== undefined) {
+                         // Remove quotes
+                        val = val.replace(/^"|"$/g, '').replace(/""/g, '"');
+                        matches.push(val);
+                    }
+                }
+                
+                // Map to object
+                if (matches.length > 0) {
+                    const obj = {};
+                    headers.forEach((h, index) => {
+                        obj[h] = matches[index] || "";
+                    });
+                    result.push(obj);
+                }
+            }
+            return result;
+        }
+
+        function renderMenu(items) {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = '';
+            document.getElementById('loading').style.display = 'none';
+
+            // Group by category
+            // We use a Map to preserve the order of categories as they appear in the CSV
+            const categories = new Map();
+
+            items.forEach(item => {
+                // Skip empty rows
+                if (!item.category) return;
+
+                if (!categories.has(item.category)) {
+                    categories.set(item.category, []);
+                }
+                categories.get(item.category).push(item);
+            });
+
+            // Sort items within categories by sort_order
+            categories.forEach(catItems => {
+                catItems.sort((a, b) => parseInt(a.sort_order) - parseInt(b.sort_order));
+            });
+
+            // Render
+            categories.forEach((catItems, categoryName) => {
+                const section = document.createElement('div');
+                section.className = 'category-section';
+
+                // Determine if this section should span full width (e.g. Food or large lists)
+                // Heuristic: If category is "אוכל" (Food) or has many items, give it full width
+                // For this specific design, Food is usually wide, Drinks are columns.
+                if (categoryName.includes('אוכל') || categoryName.includes('תפריט') || catItems.length > 10) {
+                   section.classList.add('full-width');
+                }
+
+                // Title
+                const title = document.createElement('h2');
+                title.className = 'category-title';
+                title.innerText = categoryName;
+                section.appendChild(title);
+
+                // Items list
+                const list = document.createElement('div');
+                list.className = 'items-list';
+
+                catItems.forEach(item => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'menu-item';
+
+                    // HTML Structure
+                    itemEl.innerHTML = `
+                        <div class="item-info">
+                            <div class="item-name">${item.item_name}</div>
+                            ${item.description ? `<span class="item-desc">${item.description}</span>` : ''}
+                        </div>
+                        <div class="spacer-line"></div>
+                        <div class="item-price-wrapper">
+                            ${item.price}
+                            ${item.currency && item.price ? `<span style="font-size:0.8em; margin-right:4px;">${item.currency}</span>` : ''}
+                        </div>
+                    `;
+                    list.appendChild(itemEl);
+                });
+
+                section.appendChild(list);
+                container.appendChild(section);
+            });
+        }
+
+        // Initialize
+        loadMenu();
+
+    </script>
+</body>
+</html>
